@@ -12,7 +12,7 @@ public class Reserva {
     Double valorTotal;
     String metodoPago;
     
-    Reserva() {}
+    public Reserva() {}
 
     public Reserva(Integer huespedId, LocalDate fechaIngreso, LocalDate fechaEgreso, String metodoPago) {
         

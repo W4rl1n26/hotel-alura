@@ -1,5 +1,9 @@
 package com.alura.views;
 
+import com.alura.models.Reserva;
+import com.alura.views.MenuPrincipal;
+import com.alura.views.MenuUsuario;
+import com.alura.views.RegistroHuesped;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -14,13 +18,14 @@ import com.toedter.calendar.JDateChooser;
 import java.awt.Font;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
-import java.text.Format;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
@@ -265,6 +270,12 @@ public class ReservasView extends JFrame {
 		txtFechaSalida.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				//Activa el evento, después del usuario seleccionar las fechas se debe calcular el valor de la reserva
+				// La noche tiene un costo de 100
+				if (txtFechaEntrada.getDate() != null && txtFechaSalida.getDate() != null) {
+					long diferencia = txtFechaSalida.getDate().getTime() - txtFechaEntrada.getDate().getTime();
+					int dias = (int) Math.floor(diferencia / (1000 * 60 * 60 * 24));
+					txtValor.setText(String.valueOf(dias * 100));
+				}
 			}
 		});
 		txtFechaSalida.setDateFormatString("yyyy-MM-dd");
@@ -296,9 +307,26 @@ public class ReservasView extends JFrame {
 		btnsiguiente.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (ReservasView.txtFechaEntrada.getDate() != null && ReservasView.txtFechaSalida.getDate() != null) {		
-					RegistroHuesped registro = new RegistroHuesped();
+				if (ReservasView.txtFechaEntrada.getDate() != null && ReservasView.txtFechaSalida.getDate() != null) {
+					// Tomar los valores de los campos y crear una Reserva
+					int huespedId = -1;	// luego se debe de obtener el id del huesped que está logueado
+					LocalDate fechaIngreso = ReservasView.txtFechaEntrada.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					LocalDate fechaEgreso = ReservasView.txtFechaSalida.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					String metodoPago = ReservasView.txtFormaPago.getSelectedItem().toString();
+
+					// Validar que la fecha de ingreso no sea mayor a la fecha de egreso
+					if (fechaIngreso.isAfter(fechaEgreso)) {
+						JOptionPane.showMessageDialog(null, "La fecha de ingreso no puede ser mayor a la fecha de egreso.");
+						ReservasView.txtFechaEntrada.setDate(null);
+						ReservasView.txtFechaSalida.setDate(null);
+						ReservasView.txtValor.setText("");
+						return;
+					}
+
+					// Se crea el registro de huesped y se muestra la ventana de registro, se le envia la reserva con el fin de que el huesped sea asociado a la reserva
+					RegistroHuesped registro = new RegistroHuesped(new Reserva(huespedId, fechaIngreso, fechaEgreso, metodoPago));
 					registro.setVisible(true);
+					dispose();
 				} else {
 					JOptionPane.showMessageDialog(null, "Debes llenar todos los campos.");
 				}
@@ -314,12 +342,12 @@ public class ReservasView extends JFrame {
 	}
 		
 	//Código que permite mover la ventana por la pantalla según la posición de "x" y "y"	
-	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
+	 private void headerMousePressed(MouseEvent evt) {
 	        xMouse = evt.getX();
 	        yMouse = evt.getY();
 	    }
 
-	    private void headerMouseDragged(java.awt.event.MouseEvent evt) {
+	    private void headerMouseDragged(MouseEvent evt) {
 	        int x = evt.getXOnScreen();
 	        int y = evt.getYOnScreen();
 	        this.setLocation(x - xMouse, y - yMouse);

@@ -1,29 +1,23 @@
 package com.alura.views;
 
-import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import com.alura.controllers.HuespedController;
+import com.alura.controllers.ReservaController;
+import com.alura.models.Huesped;
+import com.alura.models.Reserva;
+import com.alura.views.MenuPrincipal;
+import com.alura.views.MenuUsuario;
+import com.alura.views.ReservasView;
+import java.awt.*;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JTextField;
-import java.awt.Color;
 import com.toedter.calendar.JDateChooser;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import java.awt.Font;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import java.awt.SystemColor;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.text.Format;
-import java.awt.event.ActionEvent;
-import java.awt.Toolkit;
-import javax.swing.SwingConstants;
-import javax.swing.JSeparator;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class RegistroHuesped extends JFrame {
@@ -32,7 +26,7 @@ public class RegistroHuesped extends JFrame {
 	private JTextField txtNombre;
 	private JTextField txtApellido;
 	private JTextField txtTelefono;
-	private JTextField txtNreserva;
+	private JTextField txtMopcional;
 	private JDateChooser txtFechaN;
 	private JComboBox<Format> txtNacionalidad;
 	private JLabel labelExit;
@@ -46,7 +40,7 @@ public class RegistroHuesped extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					RegistroHuesped frame = new RegistroHuesped();
+					RegistroHuesped frame = new RegistroHuesped(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -58,8 +52,8 @@ public class RegistroHuesped extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public RegistroHuesped() {
-		
+	public RegistroHuesped(Reserva reserva) {	// Una reserva tiene un huesped relacionado, por ende, luego de crear al huesped, ese se le debe de asignar a la reserva
+
 		setIconImage(Toolkit.getDefaultToolkit().getImage(RegistroHuesped.class.getResource("/imagenes/lOGO-50PX.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 910, 634);
@@ -129,7 +123,7 @@ public class RegistroHuesped extends JFrame {
 		txtNombre.setBounds(560, 135, 285, 33);
 		txtNombre.setBackground(Color.WHITE);
 		txtNombre.setColumns(10);
-		txtNombre.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+		txtNombre.setBorder(BorderFactory.createEmptyBorder());
 		contentPane.add(txtNombre);
 		
 		txtApellido = new JTextField();
@@ -137,7 +131,7 @@ public class RegistroHuesped extends JFrame {
 		txtApellido.setBounds(560, 204, 285, 33);
 		txtApellido.setColumns(10);
 		txtApellido.setBackground(Color.WHITE);
-		txtApellido.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+		txtApellido.setBorder(BorderFactory.createEmptyBorder());
 		contentPane.add(txtApellido);
 		
 		txtFechaN = new JDateChooser();
@@ -189,7 +183,7 @@ public class RegistroHuesped extends JFrame {
 		txtTelefono.setBounds(560, 424, 285, 33);
 		txtTelefono.setColumns(10);
 		txtTelefono.setBackground(Color.WHITE);
-		txtTelefono.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+		txtTelefono.setBorder(BorderFactory.createEmptyBorder());
 		contentPane.add(txtTelefono);
 		
 		JLabel lblTitulo = new JLabel("REGISTRO HUÉSPED");
@@ -197,21 +191,7 @@ public class RegistroHuesped extends JFrame {
 		lblTitulo.setForeground(new Color(12, 138, 199));
 		lblTitulo.setFont(new Font("Roboto Black", Font.PLAIN, 23));
 		contentPane.add(lblTitulo);
-		
-		JLabel lblNumeroReserva = new JLabel("NÚMERO DE RESERVA");
-		lblNumeroReserva.setBounds(560, 474, 253, 14);
-		lblNumeroReserva.setForeground(SystemColor.textInactiveText);
-		lblNumeroReserva.setFont(new Font("Roboto Black", Font.PLAIN, 18));
-		contentPane.add(lblNumeroReserva);
-		
-		txtNreserva = new JTextField();
-		txtNreserva.setFont(new Font("Roboto", Font.PLAIN, 16));
-		txtNreserva.setBounds(560, 495, 285, 33);
-		txtNreserva.setColumns(10);
-		txtNreserva.setBackground(Color.WHITE);
-		txtNreserva.setBorder(javax.swing.BorderFactory.createEmptyBorder());
-		contentPane.add(txtNreserva);
-		
+
 		JSeparator separator_1_2 = new JSeparator();
 		separator_1_2.setBounds(560, 170, 289, 2);
 		separator_1_2.setForeground(new Color(12, 138, 199));
@@ -241,24 +221,64 @@ public class RegistroHuesped extends JFrame {
 		separator_1_2_4.setForeground(new Color(12, 138, 199));
 		separator_1_2_4.setBackground(new Color(12, 138, 199));
 		contentPane.add(separator_1_2_4);
-		
-		JSeparator separator_1_2_5 = new JSeparator();
-		separator_1_2_5.setBounds(560, 529, 289, 2);
-		separator_1_2_5.setForeground(new Color(12, 138, 199));
-		separator_1_2_5.setBackground(new Color(12, 138, 199));
-		contentPane.add(separator_1_2_5);
-		
+
 		JPanel btnguardar = new JPanel();
 		btnguardar.setBounds(723, 560, 122, 35);
 		btnguardar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				// Obtener los datos del formulario para crear un objeto de tipo Huesped
+				String nombre = txtNombre.getText();
+				String apellido = txtApellido.getText();
+				Date fechaNacimiento = txtFechaN.getDate();
+				String telefono = txtTelefono.getText();
+				String nacionalidad = (String) txtNacionalidad.getSelectedItem();
+
+				// comprobar que los datos no estén vacíos
+
+				if (nombre.isEmpty() || apellido.isEmpty() || fechaNacimiento == null || telefono.isEmpty() || nacionalidad.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Parece que hay campos vacíos, por favor verifique");
+					return;
+				}
+
+				// Crear un objeto de tipo Huesped
+				Huesped huesped = new Huesped(nombre, apellido, fechaNacimiento.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), nacionalidad, telefono);
+
+				// Guardar el objeto en la base de datos
+				HuespedController huespedController = new HuespedController();
+				int id = huespedController.guardar(huesped);
+
+				if (id == -1) {
+					JOptionPane.showMessageDialog(null, "Bienvenido de nuevo. Gracias por preferirnos");
+					MenuUsuario usuario = new MenuUsuario();
+					usuario.setVisible(true);
+					dispose();
+					return;
+				}
+
+				// enviar al usuario un mensaje de confirmación
+				String mensaje = "Se ha guardado el huesped con el id: " + id + "\n Presione OK para continuar";
+				JOptionPane.showMessageDialog(null, mensaje);
+
+				if (reserva != null) {
+					reserva.setHuespedId(id);
+					ReservaController reservaController = new ReservaController();
+					reservaController.guardar(reserva);
+					// enviar al usuario un mensaje de confirmación
+					String mensaje2 = "Se ha guardado la reserva con el id: " + reserva.getId() + "\n Presione OK para continuar";
+					JOptionPane.showMessageDialog(null, mensaje2);
+				}
+
+				// Mandarlo al menú principal
+				MenuUsuario usuario = new MenuUsuario();
+				usuario.setVisible(true);
+				dispose();
 			}
 		});
 		btnguardar.setLayout(null);
 		btnguardar.setBackground(new Color(12, 138, 199));
 		contentPane.add(btnguardar);
-		btnguardar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+		btnguardar.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		
 		JLabel labelGuardar = new JLabel("GUARDAR");
 		labelGuardar.setHorizontalAlignment(SwingConstants.CENTER);
@@ -317,12 +337,12 @@ public class RegistroHuesped extends JFrame {
 	
 	
 	//Código que permite mover la ventana por la pantalla según la posición de "x" y "y"	
-	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
+	 private void headerMousePressed(MouseEvent evt) {
 	        xMouse = evt.getX();
 	        yMouse = evt.getY();
 	    }
 
-	    private void headerMouseDragged(java.awt.event.MouseEvent evt) {
+	    private void headerMouseDragged(MouseEvent evt) {
 	        int x = evt.getXOnScreen();
 	        int y = evt.getYOnScreen();
 	        this.setLocation(x - xMouse, y - yMouse);

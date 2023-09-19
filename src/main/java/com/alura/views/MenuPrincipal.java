@@ -1,5 +1,6 @@
 package com.alura.views;
 
+import com.alura.views.Login;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -165,11 +166,11 @@ public class MenuPrincipal extends JFrame {
 	}
 	
 	//Código que permite movimentar a janela pela tela seguindo a posição de "x" e "y"	
-	private void headerMousePressed(java.awt.event.MouseEvent evt) {
+	private void headerMousePressed(MouseEvent evt) {
         xMouse = evt.getX();
         yMouse = evt.getY();
     }
-    private void headerMouseDragged(java.awt.event.MouseEvent evt) {
+    private void headerMouseDragged(MouseEvent evt) {
         int x = evt.getXOnScreen();
         int y = evt.getYOnScreen();
         this.setLocation(x - xMouse, y - yMouse);

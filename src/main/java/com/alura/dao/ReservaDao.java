@@ -105,7 +105,7 @@ public class ReservaDao {
                     int id = resultSet.getInt("id");
                     Date fechaIngreso = resultSet.getDate("fecha_ingreso");
                     Date fechaEgreso = resultSet.getDate("fecha_egreso");
-                    Double valorTotal = resultSet.getDouble("valor_total");
+                    Double valorTotal = resultSet.getDouble("valor");
                     String metodoPago = resultSet.getString("metodo_pago");
 
                     Reserva reserva = new Reserva(id, huespedId, fechaIngreso.toLocalDate(), fechaEgreso.toLocalDate(), valorTotal, metodoPago);
@@ -127,7 +127,7 @@ public class ReservaDao {
         
         int dias = fechaEgreso.getDayOfYear() - fechaIngreso.getDayOfYear();
         double valorTotal = dias * reserva.getPrecioNoche();
-        try (PreparedStatement statement = connection.prepareStatement("UPDATE reservas SET fecha_ingreso = ?, fecha_egreso = ?, valor_total = ?,metodo_pago = ? WHERE id = ?")) {
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE reservas SET fecha_ingreso = ?, fecha_egreso = ?, valor = ?,metodo_pago = ? WHERE id = ?")) {
 
             statement.setDate(1, java.sql.Date.valueOf(fechaIngreso));
             statement.setDate(2, java.sql.Date.valueOf(fechaEgreso));

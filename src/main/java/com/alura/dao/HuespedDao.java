@@ -131,7 +131,7 @@ public class HuespedDao {
 
             statement.setString(1, nombre);
             statement.setString(2, apellido);
-            statement.setDate(3, java.sql.Date.valueOf(fechaNacimiento));
+            statement.setDate(3, Date.valueOf(fechaNacimiento));
             statement.setString(4, nacionalidad);
             statement.setString(5, telefono);
             statement.setInt(6, id);
