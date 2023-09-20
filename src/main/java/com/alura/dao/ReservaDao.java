@@ -95,7 +95,8 @@ public class ReservaDao {
         List<Reserva> r = new ArrayList<>();
 
 
-        try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM reservas WHERE huesped_id = ?")) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                "SELECT * FROM reservas WHERE huesped_id = ?")) {
 
             statement.setInt(1, huespedId);
 

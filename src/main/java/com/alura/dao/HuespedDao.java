@@ -96,9 +96,11 @@ public class HuespedDao {
 
     public List<Huesped> listarPorApellido(String apellido) {
 
-        try (PreparedStatement statement = conexion.prepareStatement("SELECT * FROM huespedes WHERE apellido = ?")) {
+        try (PreparedStatement statement = conexion.prepareStatement(
+                "SELECT * FROM huespedes WHERE nombre = ? || apellido = ?")) {
 
-            statement.setString(1, apellido);
+                  statement.setString(1, apellido);
+                  statement.setString(2, apellido);
 
             try (ResultSet resultSet = statement.executeQuery()) {
 
@@ -116,8 +118,11 @@ public class HuespedDao {
 
                     r.add(huesped);
                 }
-
+                
+                 System.out.println("Resultado: " + r.get(0).toString());
+                
                 return r;
+                
             }
         } catch (SQLException e) {
 
